@@ -214,5 +214,51 @@ window.addEventListener('DOMContentLoaded', ()=> {
 		'.menu .container'
 	).render();
 
+	// Отправка формы
+	const forms = document.querySelectorAll('form'),
+		  message = {
+			  load: 'Загрузка',
+			  success: 'Спасибо! Скоро мы с Вами свяжимся',
+			  bad: 'Что то пошло не так.. Попробуйте позже'
+		  };
+
+	forms.forEach(item => {
+		postData(item);
+	});
+
+	function postData(form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+
+			const messageBlock = document.createElement('div');
+			messageBlock.classList.add('status');
+			messageBlock.innerHTML = message.load;
+
+			form.append(messageBlock);
+
+			const request = new XMLHttpRequest();
+
+			request.open('POST', 'server.php');
+
+			const formFata = new FormData(form); 
+
+			request.send(formFata);
+
+			request.addEventListener('load', () =>{
+				if(request.status === 200) {
+					console.log(request.response);
+					form.reset();
+					messageBlock.innerHTML = message.success;
+
+					setTimeout(() => {
+						messageBlock.remove();
+					}, 2000);
+				} else {
+					messageBlock.innerHTML = message.bad;
+				}
+			});
+
+		});
+	}
 
 });
