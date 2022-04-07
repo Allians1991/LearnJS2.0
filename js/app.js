@@ -240,9 +240,21 @@ window.addEventListener('DOMContentLoaded', ()=> {
 
 			request.open('POST', 'server.php');
 
-			const formFata = new FormData(form); 
+			const formFata = new FormData(form);
+			
+			request.setRequestHeader('Content-type', 'application/json'); // Заголовки нужны, если мы передам данный на сервак в формате JSON
 
-			request.send(formFata);
+			const object = {}; // Пустой Объект
+
+			// Далее перебераем объект formData
+			formFata.forEach((value, key) => {
+				object[key] = value;
+			});
+
+			const json = JSON.stringify(object); // Первеодим наш объект  JSON
+
+			// request.send(formFata); // Постим наш объект  с ФормДата
+			request.send(json);  // Постим наш объект  JSON
 
 			request.addEventListener('load', () =>{
 				if(request.status === 200) {
